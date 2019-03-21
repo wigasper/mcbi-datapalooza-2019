@@ -36,16 +36,16 @@ zip_data["population"] = None
 # and is not adequately abstracted.
 # Still needs to be tested with every variable change
 def get_census_val(cens_obj, variable, zipcode):
-        try:
-            result = cens_obj.acs5.zipcode(variable, zipcode)
-            if len(result) > 0:
-                return result[0].get(variable)
-            else:
-                return 0.0
-        except ConnectionError:
-            return None
-        except CensusException:
-            return None
+    try:
+        result = cens_obj.acs5.zipcode(variable, zipcode)
+        if len(result) > 0:
+            return result[0].get(variable)
+        else:
+            return 0.0
+    except ConnectionError:
+        return None
+    except CensusException:
+        return None
 
 # Put zip codes into a list for ease of processing
 zips = [[zipcode, None] for zipcode in zip_data["zip"]]
