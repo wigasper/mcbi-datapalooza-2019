@@ -4,9 +4,9 @@ import time
 
 from tqdm import tqdm
 import pandas as pd
-from census import Census
 # Census API wrapper package:
 #       https://github.com/datamade/census
+from census import Census
 
 #from us import states
 
@@ -55,3 +55,16 @@ zips = [[zipcode, None] for zipcode in zip_data["zip"]]
 for zipcode in tqdm(zips):
     if zipcode[1] is None:
         zipcode[1] = get_census_val(cens, "B01003_001E", zipcode[0])
+
+pops = pd.DataFrame(zips, columns=["zip", "population"])
+
+zip_data = pd.merge(zip_data, pops, how="inner", on="zip")
+
+zip_data.to_csv("zip_data.csv")
+
+with open("backup.txt", "w") as fp:
+    for item in zips:
+        fp.write(str(item[0]))
+        fp.write(", ")
+        fp.write(str(item[1]))
+        fp.write("\n")
