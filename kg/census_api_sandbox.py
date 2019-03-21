@@ -44,6 +44,8 @@ def get_census_val(cens_obj, variable, zipcode):
                 return 0.0
         except ConnectionError:
             return None
+        except CensusException:
+            return None
 
 # Put zip codes into a list for ease of processing
 zips = [[zipcode, None] for zipcode in zip_data["zip"]]
