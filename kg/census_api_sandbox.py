@@ -24,7 +24,7 @@ zip_data["zip"] = zip_data["zip"].apply(lambda x: str(x).zfill(5))
 # Create Census object with API key
 cens = Census("641afb80c092a21ba85b039d816e211551bccad4")
 
-zip_data["population"] = None
+#zip_data["population"] = None
 
 # get_census_val() : Gets the value of a given variable for a given zipcode
 # Args: cens_obj - A Census object (census package)
