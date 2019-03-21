@@ -5,7 +5,10 @@ import time
 from tqdm import tqdm
 import pandas as pd
 from census import Census
-from us import states
+# Census API wrapper package:
+#       https://github.com/datamade/census
+
+#from us import states
 
 os.chdir("/media/wkg/storage/mcbi-datapalooza-2019")
 #os.chdir("/Users/wigasper/Documents/mcbi-datapalooza-2019")
@@ -22,12 +25,16 @@ zip_data["zip"] = zip_data["zip"].apply(lambda x: str(x).zfill(5))
 cens = Census("641afb80c092a21ba85b039d816e211551bccad4")
 
 zip_data["population"] = None
-# variables at:
-#       https://api.census.gov/data/2017/acs/acs5/variables.html
-# census API wrapper package:
-#       https://github.com/datamade/census
 
-# total population variable: B01003_001E
+# get_census_val() : Gets the value of a given variable for a given zipcode
+# Args: cens_obj - A Census object (census package)
+#       variable - The variable to get a value for. From:
+#           https://api.census.gov/data/2017/acs/acs5/variables.html
+#       zipcode - The zipcode to get the variable's value for
+# Returns the value of the variable for the zipcode, or None if a connection
+# error. Also returns 0.0 if there is no value - this may need to be tweaked
+# and is not adequately abstracted.
+# Still needs to be tested with every variable change
 def get_census_val(cens_obj, variable, zipcode):
         try:
             result = cens_obj.acs5.zipcode(variable, zipcode)
@@ -38,48 +45,11 @@ def get_census_val(cens_obj, variable, zipcode):
         except ConnectionError:
             return None
 
-#start = time.perf_counter()
-#
-#zip_data["population"] = zip_data["zip"].apply(lambda x: get_census_val(cens, 
-#                                                            "B01003_001E", x))
-#print("elapsed time for pull: " + str(time.perf_counter() - start))
-#
-#zip_data.to_csv("zip_data.csv")
-
-
+# Put zip codes into a list for ease of processing
 zips = [[zipcode, None] for zipcode in zip_data["zip"]]
 
+# Get populations for zip codes if value is None. I did it this way to be able
+# non-redundantly call the API in batches in case of the common ConnectionError
 for zipcode in tqdm(zips):
     if zipcode[1] is None:
         zipcode[1] = get_census_val(cens, "B01003_001E", zipcode[0])
-
-# short test
-
-#tester = zip_data[0:20]
-#start = time.perf_counter()
-#tester["population"] = tester["zip"].apply(lambda x: get_census_val(cens, "B01003_001E", x))
-#print("test time: " + str(time.perf_counter() - start))
-
-
-
-#cens.acs5.zipcode()
-
-
-
-cens.acs5.zipcode("B01003_001E", "68154")
-
-#test = cens.acs5.zipcode("B01003_001E", 68154)
-#cens.sf1.state_zipcode("B00001_001E", 31, 68154)
-
-
-
-#cens.acs5.get(('NAME', 'B00001_001E'), {'for': 'state:{}'.format(states.NE.fips)})
-
-
-#def get_census_val(cens_obj, variable, zipcode):
-#    result = cens_obj.acs5.zipcode(variable, zipcode)
-#    return result[0].get(variable)
-
-#test1 = get_census_val(cens, "B01003_001E", 68154)
-
-#zip_data['population'] = get_census_val(cens, "B01003_001E", )
