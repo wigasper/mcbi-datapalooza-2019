@@ -2,12 +2,13 @@
 import os
 import time
 
+from tqdm import tqdm
 import pandas as pd
 from census import Census
 from us import states
 
-#os.chdir("/media/wkg/storage/mcbi-datapalooza-2019")
-os.chdir("/Users/wigasper/Documents/mcbi-datapalooza-2019")
+os.chdir("/media/wkg/storage/mcbi-datapalooza-2019")
+#os.chdir("/Users/wigasper/Documents/mcbi-datapalooza-2019")
 
 zip_data = pd.read_csv("zipcodes.csv", index_col=None)
 
@@ -20,7 +21,7 @@ zip_data["zip"] = zip_data["zip"].apply(lambda x: str(x).zfill(5))
 # Create Census object with API key
 cens = Census("641afb80c092a21ba85b039d816e211551bccad4")
 
-
+zip_data["population"] = None
 # variables at:
 #       https://api.census.gov/data/2017/acs/acs5/variables.html
 # census API wrapper package:
@@ -28,18 +29,30 @@ cens = Census("641afb80c092a21ba85b039d816e211551bccad4")
 
 # total population variable: B01003_001E
 def get_census_val(cens_obj, variable, zipcode):
-    result = cens_obj.acs5.zipcode(variable, zipcode)
-    if len(result) > 0:
-        return result[0].get(variable)
-    else:
-        return 0.0
+        try:
+            result = cens_obj.acs5.zipcode(variable, zipcode)
+            if len(result) > 0:
+                return result[0].get(variable)
+            else:
+                return 0.0
+        except ConnectionError:
+            return None
 
-start = time.perf_counter()
-zip_data["population"] = zip_data["zip"].apply(lambda x: get_census_val(cens, 
-                                                            "B01003_001E", x))
-print("elapsed time for pull: " + str(time.perf_counter() - start))
+#start = time.perf_counter()
+#
+#zip_data["population"] = zip_data["zip"].apply(lambda x: get_census_val(cens, 
+#                                                            "B01003_001E", x))
+#print("elapsed time for pull: " + str(time.perf_counter() - start))
+#
+#zip_data.to_csv("zip_data.csv")
 
-zip_data.to_csv("zip_data.csv")
+
+zips = [[zipcode, None] for zipcode in zip_data["zip"]]
+
+for zipcode in tqdm(zips):
+    if zipcode[1] is None:
+        zipcode[1] = get_census_val(cens, "B01003_001E", zipcode[0])
+
 # short test
 
 #tester = zip_data[0:20]
