@@ -68,3 +68,15 @@ with open("backup.txt", "w") as fp:
         fp.write(", ")
         fp.write(str(item[1]))
         fp.write("\n")
+
+
+
+# Get populations of people 45 to 49 "B07001_010E" for zip codes
+zips = [[zipcode, None] for zipcode in zip_data["zip"]]
+
+for zipcode in tqdm(zips):
+    if zipcode[1] is None:
+        zipcode[1] = get_census_val(cens, "B07001_010E", zipcode[0])
+        
+#######
+result = cens.acs5.zipcode("B07001_001E", 68154)

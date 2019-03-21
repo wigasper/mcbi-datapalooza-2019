@@ -37,12 +37,30 @@ zip_data = zip_data.loc[:, ~zip_data.columns.str.contains('Unnamed')]
 # Change zips to str and pad with 0s
 zip_data["zip"] = zip_data["zip"].apply(lambda x: str(x).zfill(5))
 
-#note: need to change this jion!!!!!
-zip_data = pd.merge(zip_data, agis, how="inner", on="zip")
+zip_data = pd.merge(zip_data, agis, how="left", on="zip")
 
-zip_data = pd.merge(zip_data, income_noagi, how="inner", on="zip")
+zip_data = pd.merge(zip_data, income_noagi, how="left", on="zip")
 
 ###############################
 
+cbsa_to_zip = pd.read_csv("cbsa_to_zip.csv")
+cbsa_to_zip["zip"] = cbsa_to_zip["zip"].apply(lambda x: str(x).zfill(5))
+
+cbsa_to_zip = pd.DataFrame(cbsa_to_zip, columns=["zip", "cbsa"])
+
+zip_data = pd.merge(zip_data, cbsa_to_zip, how="left", on="zip")
+zip_data = zip_data.drop_duplicates("zip")
+
 rpp = pd.read_csv("RegionalPriceParities.csv")
-rpp = rpp[rppcc["LineCode"]==1]
+rpp = rpp[rpp["LineCode"]==1]
+rpp = pd.DataFrame(rpp, columns=["GeoFips", "2016"])
+rpp = rpp.rename(index=str, columns={"GeoFips": "cbsa", "2016": "rpp"})
+
+zip_data = pd.merge(zip_data, rpp, how="left", on="cbsa")
+
+
+zip_data = zip_data.loc[:, ~zip_data.columns.str.contains("cbsa")]
+
+###############
+
+rpp_state = pd.read_csv("RPP_by_state.csv", index_col=None)
