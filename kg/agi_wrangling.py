@@ -62,5 +62,71 @@ zip_data = pd.merge(zip_data, rpp, how="left", on="cbsa")
 zip_data = zip_data.loc[:, ~zip_data.columns.str.contains("cbsa")]
 
 ###############
+# read in
+rpp_state = pd.read_csv("RPP_by_state_w_portions.csv", index_col=None)
 
-rpp_state = pd.read_csv("RPP_by_state.csv", index_col=None)
+# drop Metropolitan data
+rpp_state = rpp_state.loc[rpp_state.GeoName.str.contains("Nonmetropolitan"), :]
+rpp_state = rpp_state[rpp_state["LineCode"]==1]
+
+
+
+###### regex test
+import re
+import us
+import math
+
+pat = r"^(.*)\s\(Nonmetropolitan Portion\)"
+    
+rpp_state["GeoName"] = rpp_state["GeoName"].apply(lambda x: 
+                                                    re.sub(pat, r"\1", x))
+    
+states_dict = us.states.mapping("name", "abbr")
+
+rpp_state["GeoName"] = rpp_state["GeoName"].apply(lambda x: 
+                                                    states_dict[x])
+rpp_state = pd.DataFrame(rpp_state, columns=["GeoName", "2016"])
+
+# Some states don't have nonmetro areas, setting these values manually to the
+# metro area values
+rpp_state.loc[[64], ["2016"]] = 100.3
+rpp_state.loc[[72], ["2016"]] = 116.4
+rpp_state.loc[[248], ["2016"]] = 113.5
+rpp_state.loc[[320], ["2016"]] = 99.8
+
+# separate zip_data into 2 DFs based on whether we have a value for 
+#zip_data_rpp_valid = zip_data[zip_data["rpp"]>=0]
+
+import numpy as np
+# change rpp_state to dict
+rpp_state = rpp_state.set_index("GeoName").T.to_dict("list")
+
+zip_data.rpp = zip_data.rpp.fillna(zip_data.state)
+
+zip_data["rpp"] = zip_data["rpp"].apply(lambda x: get_rpp_for_state(x))
+
+def get_rpp_for_state(rpp):
+    if re.match("[^\d]{2}", rpp):
+        if rpp in rpp_state.keys():
+            return rpp_state[rpp][0]
+        else:
+            return np.nan
+    else:
+        return rpp
+
+
+nans = 0
+if math.isnan(zip_data["rpp"].values[0]):
+    nans += 1
+
+
+
+
+
+math.isnan(zip_data.loc[[0],['rpp']].values[0])
+def rpp_modifier(val):
+    if math.isnan(val):
+
+for sample in zip_data:
+    if math.isnan(sample["rpp"].values[0]):
+        sample["rpp"].values[0] = 

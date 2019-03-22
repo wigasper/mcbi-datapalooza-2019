@@ -6,7 +6,7 @@ from tqdm import tqdm
 import pandas as pd
 # Census API wrapper package:
 #       https://github.com/datamade/census
-from census import Census
+from census import Census, CensusException
 
 #from us import states
 
@@ -78,5 +78,12 @@ for zipcode in tqdm(zips):
     if zipcode[1] is None:
         zipcode[1] = get_census_val(cens, "B07001_010E", zipcode[0])
         
+pops = pd.DataFrame(zips, columns=["zip", "pop_45-49"])
+
+zip_data = pd.merge(zip_data, pops, how="inner", on="zip")
+
+# Save, because the API pulls take a long time
+zip_data.to_csv("zip_data.csv")
+        
 #######
-result = cens.acs5.zipcode("B07001_001E", 68154)
+result = cens.acs5.zipcode("B07001_001E", "68114")
