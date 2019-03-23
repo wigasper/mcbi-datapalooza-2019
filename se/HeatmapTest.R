@@ -9,7 +9,7 @@ rpp.data <- read.csv(file='RPP_latlon.csv', header=TRUE)
 # Register google maps API key for ggmap function
 register_google(key= 'AIzaSyAbiPNQB5LDv38RX9DKVujf2EEgNOP_aIw')
 
-# Get map with the centered on the mean of latitude/longitude values
+# Get map centered on the mean of latitude/longitude values
 mean.latitude <- mean(rpp.data[,'lat'])
 mean.longitude <- mean(rpp.data[,'lon'])
 
@@ -21,7 +21,7 @@ h.map <- ggmap(h.map, extent = "device", legend="none")
 # Plot heat map layer: polygons with fill colors based on rel. freq. of events
 h.map <- h.map + stat_density2d(data=rpp.data, aes(x=lon, y=lat, fill = ..level.., alpha=..level..), geom='polygon')
 
-# DEfine the spectral colors to fill the density contours 
+# Define the spectral colors to fill the density contours 
 h.map <- h.map + scale_fill_gradientn(colours = rev(brewer.pal(7, "Spectral")))
 
 print(h.map) # Display the plot
