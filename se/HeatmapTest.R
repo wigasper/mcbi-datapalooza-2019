@@ -4,7 +4,7 @@ library(RColorBrewer) # Color selection
 
 
 # Read in RPP/longitude/latitude data 
-rpp.data <- read.csv(file='RRP_latlon.csv', header=TRUE)
+rpp.data <- read.csv(file='RPP_latlon.csv', header=TRUE)
 
 # Register google maps API key for ggmap function
 register_google(key= 'AIzaSyAbiPNQB5LDv38RX9DKVujf2EEgNOP_aIw')
