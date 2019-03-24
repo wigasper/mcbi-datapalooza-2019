@@ -62,7 +62,7 @@ zip_data = pd.merge(zip_data, pops, how="inner", on="zip")
 
 zip_data.to_csv("zip_data.csv")
 
-with open("backup.txt", "w") as fp:
+with open("pop_45_to_49.csv", "w") as fp:
     for item in zips:
         fp.write(str(item[0]))
         fp.write(", ")
@@ -86,4 +86,232 @@ zip_data = pd.merge(zip_data, pops, how="inner", on="zip")
 zip_data.to_csv("zip_data.csv")
         
 #######
-result = cens.acs5.zipcode("B07001_001E", "68114")
+result = cens.acs5.zipcode("B07001_012E", "68114")
+
+zips = [[zipcode, None] for zipcode in zip_data["zip"]]
+
+for zipcode in tqdm(zips):
+    if zipcode[1] is None:
+        zipcode[1] = get_census_val(cens, "B07001_011E", zipcode[0])
+
+zip_data = pd.read_csv("zip_data.csv", index_col=None)
+
+pops = pd.DataFrame(zips, columns=["zip", "pop_50-54"])
+
+zip_data = pd.merge(zip_data, pops, how="inner", on="zip")
+#$#####################
+# get pop 49 to and write
+with open("pop_50_to_54.csv", "w") as fp:
+    for item in zips:
+        fp.write(str(item[0]))
+        fp.write(", ")
+        fp.write(str(item[1]))
+        fp.write("\n")
+
+######### get 55 to 59
+
+for zipcode in tqdm(zips):
+    if zipcode[1] is None:
+        zipcode[1] = get_census_val(cens, "B07001_012E", zipcode[0])
+
+with open("pop_55_to_59.csv", "w") as fp:
+    for item in zips:
+        fp.write(str(item[0]))
+        fp.write(", ")
+        fp.write(str(item[1]))
+        fp.write("\n")
+
+pops = pd.DataFrame(zips, columns=["zip", "pop_55-59"])
+zip_data = pd.read_csv("zip_data.csv", index_col=None)
+zip_data = zip_data.loc[:, ~zip_data.columns.str.contains('Unnamed')]
+zip_data["zip"] = zip_data["zip"].apply(lambda x: str(x).zfill(5))
+zip_data = pd.merge(zip_data, pops, how="inner", on="zip")
+zip_data.to_csv("zip_data.csv")
+
+#####################################################
+# NEXT PULL 60-64
+populated_zips = zip_data[zip_data["population"] > 0]
+
+zips = [[zipcode, None] for zipcode in populated_zips["zip"]]
+
+for zipcode in tqdm(zips):
+    if zipcode[1] is None:
+        zipcode[1] = get_census_val(cens, "B07001_013E", zipcode[0])
+
+with open("pop_60_to_64.csv", "w") as fp:
+    for item in zips:
+        fp.write(str(item[0]))
+        fp.write(", ")
+        fp.write(str(item[1]))
+        fp.write("\n")
+        
+zip_data = pd.read_csv("zip_data.csv", index_col=None)
+zip_data = zip_data.loc[:, ~zip_data.columns.str.contains('Unnamed')]
+zip_data["zip"] = zip_data["zip"].apply(lambda x: str(x).zfill(5))
+pops = pd.DataFrame(zips, columns=["zip", "pop_60-64"])
+
+zip_data = pd.merge(zip_data, pops, how="left", on="zip")
+zip_data.to_csv("zip_data.csv")
+
+# get 65 to 69
+populated_zips = zip_data[zip_data["population"] > 0]
+zips = [[zipcode, None] for zipcode in populated_zips["zip"]]
+
+
+
+for zipcode in tqdm(zips):
+    if zipcode[1] is None:
+        zipcode[1] = get_census_val(cens, "B07001_014E", zipcode[0])
+
+with open("pop_65_to_69.csv", "w") as fp:
+    for item in zips:
+        fp.write(str(item[0]))
+        fp.write(", ")
+        fp.write(str(item[1]))
+        fp.write("\n")
+
+pops = pd.DataFrame(zips, columns=["zip", "pop_65-69"])
+zip_data = pd.read_csv("zip_data.csv", index_col=None)
+zip_data = zip_data.loc[:, ~zip_data.columns.str.contains('Unnamed')]
+zip_data["zip"] = zip_data["zip"].apply(lambda x: str(x).zfill(5))
+zip_data = pd.merge(zip_data, pops, how="left", on="zip")
+zip_data.to_csv("zip_data.csv")
+
+# next 70-75
+################################
+
+populated_zips = zip_data[zip_data["population"] > 0]
+
+zips = [[zipcode, None] for zipcode in populated_zips["zip"]]
+
+for zipcode in tqdm(zips):
+    if zipcode[1] is None:
+        zipcode[1] = get_census_val(cens, "B07001_015E", zipcode[0])
+
+with open("pop_70_to_74.csv", "w") as fp:
+    for item in zips:
+        fp.write(str(item[0]))
+        fp.write(", ")
+        fp.write(str(item[1]))
+        fp.write("\n")
+        
+zip_data = pd.read_csv("zip_data.csv", index_col=None)
+zip_data = zip_data.loc[:, ~zip_data.columns.str.contains('Unnamed')]
+zip_data["zip"] = zip_data["zip"].apply(lambda x: str(x).zfill(5))
+pops = pd.DataFrame(zips, columns=["zip", "pop_70-74"])
+
+zip_data = pd.merge(zip_data, pops, how="left", on="zip")
+zip_data.to_csv("zip_data.csv")
+
+# get 75+
+
+zips = [[zipcode, None] for zipcode in populated_zips["zip"]]
+
+for zipcode in tqdm(zips):
+    if zipcode[1] is None:
+        zipcode[1] = get_census_val(cens, "B07001_016E", zipcode[0])
+
+with open("pop_75_to_inf.csv", "w") as fp:
+    for item in zips:
+        fp.write(str(item[0]))
+        fp.write(", ")
+        fp.write(str(item[1]))
+        fp.write("\n")
+
+pops = pd.DataFrame(zips, columns=["zip", "pop_75-inf"])
+zip_data = pd.read_csv("zip_data.csv", index_col=None)
+zip_data = zip_data.loc[:, ~zip_data.columns.str.contains('Unnamed')]
+zip_data["zip"] = zip_data["zip"].apply(lambda x: str(x).zfill(5))
+zip_data = pd.merge(zip_data, pops, how="left", on="zip")
+zip_data.to_csv("zip_data.csv")
+
+############### median individ. income
+
+zips = [[zipcode, None] for zipcode in populated_zips["zip"]]
+
+for zipcode in tqdm(zips):
+    if zipcode[1] is None:
+        zipcode[1] = get_census_val(cens, "B19326_002E", zipcode[0])
+
+with open("median_indiv_income.csv", "w") as fp:
+    for item in zips:
+        fp.write(str(item[0]))
+        fp.write(", ")
+        fp.write(str(item[1]))
+        fp.write("\n")
+        
+zip_data = pd.read_csv("zip_data.csv", index_col=None)
+zip_data = zip_data.loc[:, ~zip_data.columns.str.contains('Unnamed')]
+zip_data["zip"] = zip_data["zip"].apply(lambda x: str(x).zfill(5))
+incs = pd.DataFrame(zips, columns=["zip", "median_indiv_income"])
+
+zip_data = pd.merge(zip_data, incs, how="left", on="zip")
+zip_data.to_csv("zip_data.csv")
+
+######################
+# median age
+# B01002_001E
+zips = [[zipcode, None] for zipcode in populated_zips["zip"]]
+
+for zipcode in tqdm(zips):
+    if zipcode[1] is None:
+        zipcode[1] = get_census_val(cens, "B01002_001E", zipcode[0])
+
+with open("median_age.csv", "w") as fp:
+    for item in zips:
+        fp.write(str(item[0]))
+        fp.write(", ")
+        fp.write(str(item[1]))
+        fp.write("\n")
+        
+zip_data = pd.read_csv("zip_data.csv", index_col=None)
+zip_data = zip_data.loc[:, ~zip_data.columns.str.contains('Unnamed')]
+zip_data["zip"] = zip_data["zip"].apply(lambda x: str(x).zfill(5))
+incs = pd.DataFrame(zips, columns=["zip", "median_age"])
+
+zip_data = pd.merge(zip_data, incs, how="left", on="zip")
+zip_data.to_csv("zip_data.csv")
+
+
+
+
+
+
+
+
+
+
+
+
+#######################
+#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#############
