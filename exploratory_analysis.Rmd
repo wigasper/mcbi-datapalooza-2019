@@ -1,6 +1,6 @@
 ---
 title: "Exploratory Analysis"
-output: html_notebook
+output: rmarkdown::github_document
 ---
 
 Now that we've aggregated potentially relevant data we want to do an exploratory analysis to look at our features. For this competition we are tasked with creating a scoring metric without any data to evaluate against. Thus, we only have guesses as to characteristics constitute a high scoring ZIP code. It also means we are not able to incorporate any kind of supervised learning.
