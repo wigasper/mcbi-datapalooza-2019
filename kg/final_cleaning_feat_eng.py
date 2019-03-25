@@ -17,8 +17,8 @@ import pandas as pd
 #       https://github.com/datamade/census
 from census import Census, CensusException
 
-#os.chdir("/media/wkg/storage/mcbi-datapalooza-2019")
-os.chdir("/Users/wigasper/Documents/mcbi-datapalooza-2019")
+os.chdir("/media/wkg/storage/mcbi-datapalooza-2019")
+#os.chdir("/Users/wigasper/Documents/mcbi-datapalooza-2019")
 
 # Read in 
 zip_data = pd.read_csv("zip_data.csv", index_col=None)
@@ -157,3 +157,5 @@ zip_data["freq_pop_75-inf"] = zip_data["pop_75-inf"] / zip_data["population"]
 
 
 zip_data["median_indiv_income"] = zip_data["median_indiv_income"].clip(lower=0)
+
+zip_data = zip_data.fillna(0.0)
