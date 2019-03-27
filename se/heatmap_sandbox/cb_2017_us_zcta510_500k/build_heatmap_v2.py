@@ -42,7 +42,7 @@ m = Basemap(
 shp_info = m.readshapefile(
     os.path.basename(us_shape_file_dir),'states',drawbounds=True
     )
-m.drawrivers()
+
 # Convert integer ZIP5 field to character dtype.
 DF['zip'] = DF['zip'].astype(str)
 
@@ -82,7 +82,7 @@ for nshape,seg in enumerate(m.states):
         edgecolor = "#000000"
         plt.fill(i,j,color,edgecolor=edgecolor);
 
-
+m.drawrivers(linewidth=1, color='blue', linestyle = 'dashdot')
 
 # (Optional) include colorbar.
 sm = plt.cm.ScalarMappable(
@@ -91,7 +91,7 @@ sm = plt.cm.ScalarMappable(
 
 mm = plt.cm.ScalarMappable(cmap=colormap)
 mm.set_array([vmin, vmax])
-plt.colorbar(mm,ticks=np.arange(vmin, vmax+1, 1),orientation="vertical")
-plt.title("Chicago Population by ZIP5")
+plt.colorbar(mm,orientation="vertical")
+plt.title("Life Insurance Scores by ZIP5")
 plt.gca().axis("off")
 plt.show()
