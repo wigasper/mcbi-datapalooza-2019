@@ -11,19 +11,18 @@ us_shape_file_dir = "/home/sebastian/Documents/mcbi-datapalooza-2019/se/heatmap_
 os.chdir(us_shape_file_dir)
 
 # Chicago coordinates.
-lowerlon = -69 
-upperlon = -80
+upperlon = -69
+lowerlon = -80
 lowerlat = 24.5548
 upperlat = 45.5
-
 
 m = Basemap(
     llcrnrlon=lowerlon,
     llcrnrlat=lowerlat,
     urcrnrlon=upperlon,
     urcrnrlat=upperlat,
-    resolution='h',
-    projection='lcc',
+    resolution='l',
+    projection='cyl',
     lat_0=lowerlat,
     lat_1=upperlat,
     lon_0=lowerlon,
