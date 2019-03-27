@@ -57,8 +57,8 @@ popdens = {
 # with other ranges.
 ziplist = []
 colors  = {}
-vmin    = 0.
-vmax    = 1.0
+vmin    = 0.0
+vmax    = .3
 
 
 # Filter m.states_info to only Chicago zipcodes.
@@ -90,9 +90,12 @@ sm = plt.cm.ScalarMappable(
     )
 
 mm = plt.cm.ScalarMappable(cmap=colormap)
-mm.set_array([vmin, .6])
+mm.set_array([vmin, vmax])
 barObj = plt.colorbar(mm,orientation="vertical")
-barObj.set_ticks([0,.2,.4,.6])
-plt.title("Life Insurance Scores by ZIP5")
+barObj.set_ticks([0,.1,.2,.3])
+barObj.ax.get_yaxis().labelpad = 15
+barObj.ax.set_ylabel('Potential Scores', rotation =270)
+
+plt.title("Potential Scores for Omaha Metro-Area Zip Codes")
 plt.gca().axis("off")
 plt.show()
