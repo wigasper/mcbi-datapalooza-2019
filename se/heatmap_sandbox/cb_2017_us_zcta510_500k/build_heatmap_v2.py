@@ -90,8 +90,9 @@ sm = plt.cm.ScalarMappable(
     )
 
 mm = plt.cm.ScalarMappable(cmap=colormap)
-mm.set_array([vmin, vmax])
-plt.colorbar(mm,orientation="vertical")
+mm.set_array([vmin, .6])
+barObj = plt.colorbar(mm,orientation="vertical")
+barObj.set_ticks([0,.2,.4,.6])
 plt.title("Life Insurance Scores by ZIP5")
 plt.gca().axis("off")
 plt.show()
